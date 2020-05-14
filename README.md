@@ -1,0 +1,1 @@
+# LER_staticWQ
