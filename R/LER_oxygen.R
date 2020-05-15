@@ -123,7 +123,7 @@ valid_flux <- function(flx, conc){
 do <- matrix(NA, nrow = nrow(appr_wtr), ncol = ncol(appr_wtr))
 do[, 1] <- 1e4
 dx <- mean(diff(appr_depths))
-dt <- as.numeric(mean(diff(time)))
+dtt <- as.numeric(mean(diff(time)))
 
 k600 = k600.2.kGAS.base(k600 = k.cole.base(wnd$wind),temperature = appr_wtr[1,], gas = "O2")
 o2sat = o2.at.sat.base(temp = appr_wtr[1,], altitude = 300) * 1000
@@ -135,19 +135,19 @@ khalf <- 2000
 # http://www.dam.brown.edu/people/alcyew/handouts/numdiff.pdf 
 for (dt in 2: ncol(do)) {
   
-  do[1, dt] <- do[1, dt-1] + valid_flux( (1) * kz[1, dt-1]  * dt / dx**3 * (2 * do[1, dt-1] - 5 * do[1+1, dt-1] + 4 * do[1 +2, dt-1] - do[1+3, dt-1]) +
+  do[1, dt] <- do[1, dt-1] + valid_flux( (1) * kz[1, dt-1]  * dtt / dx**3 * (2 * do[1, dt-1] - 5 * do[1+1, dt-1] + 4 * do[1 +2, dt-1] - do[1+3, dt-1]) +
     k600[dt-1] * (o2sat[dt-1] - do[1, dt-1]) / dx +
     nep * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) -
       # nep  * 1.08^(appr_wtr[dz, dt-1] -20) -
     sed * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) * appr_vol[dz]/(appr_areas[dz] * dx), do[1, dt-1])
   
-  do[(nrow(do)), dt] <- do[nrow(do), dt-1] + valid_flux( (1) * kz[nrow(do), dt-1]  * dt / dx**3 * (2 * do[nrow(do), dt-1] - 5 * do[nrow(do)-1, dt-1] + 4 * do[nrow(do) -2, dt-1] - do[nrow(do)-3, dt-1]) +
+  do[(nrow(do)), dt] <- do[nrow(do), dt-1] + valid_flux( (1) * kz[nrow(do), dt-1]  * dtt / dx**3 * (2 * do[nrow(do), dt-1] - 5 * do[nrow(do)-1, dt-1] + 4 * do[nrow(do) -2, dt-1] - do[nrow(do)-3, dt-1]) +
     nep * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) -
       # nep  * 1.08^(appr_wtr[dz, dt-1] -20) -
     sed * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) * appr_vol[dz]/(appr_areas[dz] * dx), do[nrow(do), dt-1])
   
   for (dz in 2: (nrow(do)-1)) {
-    do[dz, dt] <- do[dz, dt-1] + valid_flux( (1) * kz[dz, dt-1]  * dt / dx**2 * (do[dz+1, dt-1] - 2 * do[dz, dt-1] + do[dz-1, dt-1]) +
+    do[dz, dt] <- do[dz, dt-1] + valid_flux( (1) * kz[dz, dt-1]  * dtt / dx**2 * (do[dz+1, dt-1] - 2 * do[dz, dt-1] + do[dz-1, dt-1]) +
       nep * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) -
         # nep *  1.08^(appr_wtr[dz, dt-1] -20) -
       sed * (do[dz, dt-1]/(do[dz, dt-1] + khalf)) * 1.08^(appr_wtr[dz, dt-1] -20) * appr_vol[dz]/(appr_areas[dz] * dx), do[dz, dt-1])
