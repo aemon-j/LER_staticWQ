@@ -125,7 +125,7 @@ do[, 1] <- 1e4
 dx <- mean(diff(appr_depths))
 dtt <- as.numeric(mean(diff(time)))
 
-k600 = k600.2.kGAS.base(k600 = k.cole.base(wnd$wind),temperature = appr_wtr[1,], gas = "O2")
+k600 = k600.2.kGAS.base(k600 = k.cole.base(meteo.df$Ten_Meter_Elevation_Wind_Speed_meterPerSecond),temperature = appr_wtr[1,], gas = "O2")
 o2sat = o2.at.sat.base(temp = appr_wtr[1,], altitude = 300) * 1000
 
 kz = kz_oskundakci 
